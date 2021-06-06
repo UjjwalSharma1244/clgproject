@@ -42,3 +42,21 @@ elif choice == 6:
 
 else  :
     print("not recoginze")
+    
+    
+  
+  
+# Using Voice 
+
+import webbrowser
+import speech_recognition as sr
+print("welcome")
+r = sr.Recognizer()
+with sr.Microphone() as Source:
+    print("start saying")
+    audio = r.listen(Source)
+    print("We got it , please wait")
+
+ch = r.recognize_google(audio)
+#if("date" in ch) and (("run" in ch) or ("execute" in ch)):
+webbrowser.open_new_tab('https://www.google.com/search?q='+ch)
