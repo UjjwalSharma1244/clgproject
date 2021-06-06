@@ -60,3 +60,60 @@ with sr.Microphone() as Source:
 ch = r.recognize_google(audio)
 #if("date" in ch) and (("run" in ch) or ("execute" in ch)):
 webbrowser.open_new_tab('https://www.google.com/search?q='+ch)
+
+
+# update......
+
+
+import webbrowser
+import speech_recognition as sr
+import pyttsx3
+import pywhatkit
+import datetime
+import wikipedia
+print("welcome")
+
+listener = sr.Recognizer()
+engine = pyttsx3.init()
+voices = engine.getProperty("voices")
+engine.setProperty('voice',voices[1].id) # Set femal voice
+
+def engine_talk(text):
+    engine.say(text)
+    engine.runAndWait()
+
+#engine.say("I am Your bot")
+#engine.say("How Can I help You")
+
+def user_commands():
+    with sr.Microphone() as Source:
+        print("start saying")
+        voice = listener.listen(Source)
+        print("We got it , please wait")
+        command = listener.recognize_google(voice)
+        #command = command.lower()
+        print(command)
+        return command
+
+def run_alexa():
+    command = user_commands()
+    if 'play' or 'start' in command:
+        #song = command.replace('play',' ')
+        #print("new command is" +command)
+        #print("the bot is telling us: Playing" +command)
+        engine_talk("playing" +command)
+        pywhatkit.playonyt(command)
+
+    elif 'time' in command:
+        time = datetime.datetime.now().strftime('%I:%M %p')
+        engine_talk('The current time is' +time)
+
+    elif 'who is' in command:
+        name = command.replace('who is','')
+        info = wikipedia.summary(name,1)
+        print(info)
+        engine_talk(info)
+    else:
+        engine_talk('I could not hear you Properly')
+
+run_alexa()
