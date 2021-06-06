@@ -71,6 +71,7 @@ import pyttsx3
 import pywhatkit
 import datetime
 import wikipedia
+import pyjokes
 print("welcome")
 
 listener = sr.Recognizer()
@@ -96,24 +97,38 @@ def user_commands():
         return command
 
 def run_alexa():
-    command = user_commands()
-    if 'play' or 'start' in command:
-        #song = command.replace('play',' ')
+    usercommand = user_commands()
+    if(('play' in usercommand) or ('start' in usercommand)):
+        song = usercommand.replace('play',' ')
         #print("new command is" +command)
         #print("the bot is telling us: Playing" +command)
-        engine_talk("playing" +command)
-        pywhatkit.playonyt(command)
+        engine_talk("playing" +song)
+        pywhatkit.playonyt(song)
 
-    elif 'time' in command:
+    if 'time' in usercommand:
         time = datetime.datetime.now().strftime('%I:%M %p')
         engine_talk('The current time is' +time)
 
-    elif 'who is' in command:
-        name = command.replace('who is','')
+    if 'who is' in usercommand:
+        name = usercommand.replace('who is','')
         info = wikipedia.summary(name,1)
         print(info)
         engine_talk(info)
+
+    if 'joke' in usercommand:
+        engine_talk(pyjokes.get_joke())
+
+    if 'show me' in usercommand:
+        show = usercommand.replace('show me',' ')
+        webbrowser.open_new_tab('https://www.google.com/search?q='+show)
+
     else:
         engine_talk('I could not hear you Properly')
 
 run_alexa()
+
+#ch = r.recognize_google(audio)
+#if("Youtube" in ch):
+#    webbrowser.open_new_tab('https://www.youtube.com/search?q='+data)
+#else:
+#    webbrowser.open_new_tab('https://www.google.com/search?q='+ch)
