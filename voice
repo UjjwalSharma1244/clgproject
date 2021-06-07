@@ -1,52 +1,3 @@
-import  webbrowser 
-import  time
-import  subprocess
-import pyshorteners as sh
-option='''
-Press  1  to  start  your  vlc  media player :
-Press  2  to  play your fav song in youtube :  
-Press  3  to  search something  on google   :  
-Press  4  to send whatsapp message to your fav number  :  
-Press  5  to  check current  time and date  :
-press 6 to short any link : 
-'''
-print(option)
-
-#  taking  input from  user  
-#  1 st
-choice=input()
-#  input function will take input in str  format 
-#   conditional  state
-if   choice  ==   '5' :
-    #   to connect  our BIOS  time 
-    current_time=time.ctime()
-    print(current_time)
-
-elif  choice  ==  '1'  :
-    #   to connect  os level application we use subprocess 
-    subprocess.getoutput('vlc')
-
-elif  choice  ==  '3' :
-    data=input("type your search :--->  ")
-    webbrowser.open_new_tab('https://www.google.com/search?q='+data)
-
-elif choice =='2':
-	data=input("type your search :-->  ")
-	webbrowser.open_new_tab('https://www.youtube.com/search?q='+data)
-
-elif choice == 6:
-    link = input("please enter Link")#'https://www.youtube.com/c/realhorrorvideo'
-    s = sh.Shortener()
-    x = (s.tinyurl.short(link))
-    print(x)
-
-else  :
-    print("not recoginze")
-    
-    
-
-# update......
-
 import webbrowser
 import speech_recognition as sr
 import pyttsx3
@@ -55,9 +6,13 @@ import datetime
 import wikipedia
 import pyjokes
 import sys
+import requests
+import calendar
+import random
+import pyshorteners as sh
 print("welcome")
 
-listener = sr.Recognizer()
+#listener = sr.Recognizer()
 engine = pyttsx3.init()
 voices = engine.getProperty("voices")
 engine.setProperty('voice',voices[1].id) # Set femal voice
@@ -66,51 +21,115 @@ def engine_talk(text):
     engine.say(text)
     engine.runAndWait()
 
-#engine.say("I am Your bot")
-#engine.say("How Can I help You")
-
 def user_commands():
+    listener = sr.Recognizer()
     with sr.Microphone() as Source:
+
         print("start saying")
+        listener.pause_threshold = 0.7
+        listener.phrase_threshold = 0.2
+        listener.energy_threshold = 365
         voice = listener.listen(Source)
         print("We got it , please wait")
-        command = listener.recognize_google(voice)
-        #command = command.lower()
-        print(command)
-        return command
+        command = ''
+        try:
+            command = listener.recognize_google(voice)
+            print("You Said : " + command)
 
-def run_alexa():
-    usercommand = user_commands()
-    if(('play' in usercommand) or ('start' in usercommand)):
-        song = usercommand.replace('play',' ')
-        #print("new command is" +command)
-        #print("the bot is telling us: Playing" +command)
-        engine_talk("playing" +song)
-        pywhatkit.playonyt(song)
+        except Exception as e:
+            print("Exception : Sorry .. I Coulnt recognize what you said" + str(e))
+            print("Say that again Please...")
+            engine_talk("Could you please say that again")
+    return command 
 
-    if 'time' in usercommand:
-        time = datetime.datetime.now().strftime('%I:%M %p')
-        engine_talk('The current time is' +time)
+def getDate():
+    now = datetime.datetime.now()
+    my_date =datetime.datetime.today()
+    weakday = calendar.day_name[my_date.weekday()]
+    monthNum = now.month
+    dayNum = now.day
 
-    if 'who is' in usercommand:
-        name = usercommand.replace('who is','')
-        info = wikipedia.summary(name,1)
-        print(info)
-        engine_talk(info)
+    MONTHS = ['January', 'February' , 'March' , 'April' , 'May' , 'June' ,
+                   'July' , 'August' , 'September' , 'October' , 'November' ,'December']
 
-    if 'joke' in usercommand:
-        engine_talk(pyjokes.get_joke())
+    ordinalNumbers = ['1st' , '2nd' , '3rd' , '4th' , '5th ', '6th' , '7th' , '8th' , '9th' , '10th' , '11th',
+                      '12th' , '13th' , '14th' , '15th' , '16th' , '17th' ,'18th' , '19th' , '20th' , '21st' ,
+                      '22nd', '23rd' , '24th' , '25th' , '26th', '27th' , '28th' , '29th' , '30th' , '31st'
+                     ]
 
-    if 'show me' in usercommand:
-        show = usercommand.replace('show me',' ')
-        engine_talk("here is" +show)
-        webbrowser.open_new_tab('https://www.google.com/search?q='+show)
+    return 'Today is {} {} {}'.format(ordinalNumbers[dayNum -1],MONTHS[monthNum -1],weakday)
 
-    if 'stop' in usercommand:
-        sys.exit()
+def wishMe():
+    GREETING_INPUTS = ['hi' , 'hey' , 'wassup' , 'hello']
+    GREETING_RESPONSES = ['hello' , 'hey there' ]
+    HELP_GREET_RESPONSES = ['how may I help you' , 'I am now ready to take your commands' ,
+                            'Please tell me what I can do for you']
+
+    hour = int(datetime.datetime.now().hour)
+    if hour > 0 and hour <12 :
+        engine_talk('Good Morning Sir...')
+        engine_talk('I am alexa... Your Virtal Assistant')
+        engine_talk(getDate())
+        engine_talk(random.choice(HELP_GREET_RESPONSES))
+
+    elif hour >=12 and hour <= 18 :
+        engine_talk('Good Afternoon Sir...')
+        engine_talk('I am alexa.... Your Virtal Assistant')
+        engine_talk(getDate())
+        engine_talk(random.choice(HELP_GREET_RESPONSES))
 
     else:
-        engine_talk('I could not hear you Properly')
+        engine_talk('Good Night Sir..')
+        engine_talk('I am Alexa... Your Virtal Assistant')
+        engine_talk(getDate())
+        engine_talk(random.choice(HELP_GREET_RESPONSES))
 
-while True:
-    run_alexa()
+if __name__ =="__main__" :
+    wishMe()
+    #import tkinter as tk
+
+    while True:
+        usercommand = user_commands().lower()
+        if ('audible' in usercommand) or ('can you hear me' in usercommand):
+            engine_talk("Yes you are audiable")
+
+        if ('link' in usercommand):
+            engine_talk("Please Enter link")
+            link = input("Please Enter Link")
+            s = sh.Shortener()
+            x = (s.tinyurl.short(link))
+            engine_talk("Here Is your Short Link")
+            print(x)
+
+
+        if(('play' in usercommand) or ('start' in usercommand) or ('music' in usercommand) or ('song' in usercommand)):
+            #song = usercommand.replace('play',' ')
+            pywhatkit.playonyt(usercommand)
+
+        if ('start youtube' in usercommand) or ('open youtube' in usercommand):
+            webbrowser.open('www.youtube.com')
+
+        if 'time' in usercommand:
+            time = datetime.datetime.now().strftime('%I:%M %p')
+            engine_talk('The current time is' +time)
+
+        if(('who is' in usercommand) or ('kon hai' in usercommand) or ("something about" in usercommand) or ('kaun' in usercommand)):
+            name = usercommand.replace('who is','')
+            info = wikipedia.summary(name,1)
+            print(info)
+            engine_talk(info)
+
+        if 'joke' in usercommand:
+            engine_talk(pyjokes.get_joke())
+
+        if 'show me' in usercommand:
+            show = usercommand.replace('show me',' ')
+            engine_talk("here is" +show)
+            webbrowser.open_new_tab('https://www.google.com/search?q='+show)
+
+        if(('stop' in usercommand) or ('exit' in usercommand) or ('shut down' in usercommand)):
+            engine_talk("Good Bye Sir... hope we meet soon")
+            sys.exit()
+
+        if 'amazon' in usercommand:
+            webbrowser.open_new_tab('https://www.amazon.in/')
