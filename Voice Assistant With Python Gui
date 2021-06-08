@@ -10,7 +10,10 @@ import requests
 import calendar
 import random
 import pyshorteners as sh
+from tkinter import *
+import tkinter as tk
 print("welcome")
+pos = N
 
 #listener = sr.Recognizer()
 engine = pyttsx3.init()
@@ -21,6 +24,27 @@ def engine_talk(text):
     engine.say(text)
     engine.runAndWait()
 
+def InsertText(text):
+    output.delete('1.0',END)
+    output.insert(tk.INSERT,text)
+
+def click():                   #once click on NAME button
+    entered_text = textentry.get()   #stored data in text box
+    definition = "Hello " +str(entered_text)+ " I'm Genia your virtual assistant\npress ASK to ask for anything"
+    output.insert(END,definition)
+
+    # output.insert(END,definition)
+    engine_talk(definition)
+    nameButton = Button(window, text= "Enter your Name", width = 20, command = click, fg = "#272324", bg= "#A9A9A9",state="disabled").grid(row=3, column=0 ,sticky=pos)
+
+def refresh():                   #once click on ASK button
+    #definition = "I'm listening.."
+    #InsertText(definition)
+
+    #engine_talk(definition)
+    main()
+
+
 def user_commands():
     listener = sr.Recognizer()
     with sr.Microphone() as Source:
@@ -30,6 +54,10 @@ def user_commands():
         listener.phrase_threshold = 0.2
         listener.energy_threshold = 365
         voice = listener.listen(Source)
+        if voice == ' ':
+            usr = user_commands()
+            #pass
+
         print("We got it , please wait")
         command = ''
         try:
@@ -84,10 +112,11 @@ def wishMe():
         engine_talk(getDate())
         engine_talk(random.choice(HELP_GREET_RESPONSES))
 
-if __name__ =="__main__" :
+def main():
+#if __name__ =="__main__" :
     wishMe()
-    #import tkinter as tk
-
+    import tkinter as tk
+    
     while True:
         usercommand = user_commands().lower()
         if ('audible' in usercommand) or ('can you hear me' in usercommand):
@@ -111,11 +140,13 @@ if __name__ =="__main__" :
 
         if 'time' in usercommand:
             time = datetime.datetime.now().strftime('%I:%M %p')
+            InsertText(time)
             engine_talk('The current time is' +time)
 
         if(('who is' in usercommand) or ('kon hai' in usercommand) or ("something about" in usercommand) or ('kaun' in usercommand)):
             name = usercommand.replace('who is','')
             info = wikipedia.summary(name,1)
+            InsertText(info)
             print(info)
             engine_talk(info)
 
@@ -129,7 +160,50 @@ if __name__ =="__main__" :
 
         if(('stop' in usercommand) or ('exit' in usercommand) or ('shut down' in usercommand)):
             engine_talk("Good Bye Sir... hope we meet soon")
+
             sys.exit()
 
         if 'amazon' in usercommand:
             webbrowser.open_new_tab('https://www.amazon.in/')
+
+
+def close_window():
+    window.destroy()
+    sys.exit()
+    
+
+window = Tk()
+window.title("Alexa")
+window.iconbitmap('C:\\Users\\Shubham\\Desktop\\brain_sWy_icon.ico')
+window.configure(background = 'black')
+window.geometry('595x660')
+
+#Photo Label
+AssisstancePhoto = 'C:\\Users\\Shubham\\Desktop\\robot.png'
+photo1 = PhotoImage(file=AssisstancePhoto)
+Label (window , image = photo1, bg ='black') .grid(row=0, column = 0, sticky=E)
+
+# #Text Label
+
+#create a text entry box
+textentry = Entry(window, width = 50 ,bg="grey")
+textentry.grid(row =2 , column=0, sticky =pos)
+# text = textentry.get()
+
+#Add a submit button 
+#nameButton = Button(window, text= "Enter your Name", width = 20, command = click, fg = "#272324", bg= "#A9A9A9").grid(row=3, column=0 ,sticky=pos)
+askButton = Button(window, text= "ASK", width= 20, command = refresh, fg = "#272324", bg= "#A9A9A9").grid(row=4, column= 0 , sticky=pos)
+
+#textbox
+output = Text(window, width=68 , height = 5, wrap = WORD, bg= 'black',fg = "#00D1FF")
+output.grid(row=5, column=0, columnspan=2, sticky=pos)
+output.config(state=NORMAL)
+
+#Exit Text Label
+# Label (window,text="Click to Exit", bg= 'black',fg = "white",font = "none 10 bold" ).grid (row=6 ,column =0, sticky=W)
+#Exit Button
+Button(window, text= "EXIT", width= 14, command=close_window, fg = "#272324", bg= "#A9A9A9").grid(row=7, column= 0 , sticky=pos)
+
+Label (window,text="© Made By Ujjwal Sharma", bg= 'black',fg = "white",font = "none 7 bold" ).grid (row=8 ,column =0, sticky=S)
+
+window.mainloop()
