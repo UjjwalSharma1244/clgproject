@@ -12,6 +12,7 @@ import random
 import pyshorteners as sh
 from tkinter import *
 import tkinter as tk
+from PIL import Image, ImageTk
 print("welcome")
 pos = N
 
@@ -28,20 +29,22 @@ def InsertText(text):
     output.delete('1.0',END)
     output.insert(tk.INSERT,text)
 
-def click():                   #once click on NAME button
-    entered_text = textentry.get()   #stored data in text box
-    definition = "Hello " +str(entered_text)+ " I'm Genia your virtual assistant\npress ASK to ask for anything"
-    output.insert(END,definition)
+def click(): 
+    wishMe()
+    #once click on NAME button
+    #entered_text = textentry.get()   #stored data in text box
+    #definition = "Hello " +str(entered_text)+ " I'm Genia your virtual assistant\npress ASK to ask for anything"
+    #output.insert(END,definition)
 
     # output.insert(END,definition)
-    engine_talk(definition)
-    nameButton = Button(window, text= "Enter your Name", width = 20, command = click, fg = "#272324", bg= "#A9A9A9",state="disabled").grid(row=3, column=0 ,sticky=pos)
+    #engine_talk(definition)
+    #nameButton = Button(window, text= "Enter your Name", width = 20, command = click, fg = "#272324", bg= "#A9A9A9",state="disabled").grid(row=3, column=0 ,sticky=pos)
 
 def refresh():                   #once click on ASK button
-    #definition = "I'm listening.."
+    definition = "I'm listening.."
     #InsertText(definition)
 
-    #engine_talk(definition)
+    engine_talk(definition)
     main()
 
 
@@ -94,8 +97,16 @@ def wishMe():
                             'Please tell me what I can do for you']
 
     hour = int(datetime.datetime.now().hour)
+    entered_text = textentry.get()   #stored data in text box
+    #definition = "Hello " +str(entered_text)+ " I'm Genia your virtual assistant\npress ASK to ask for anything"
+    #output.insert(END,definition)
+
+    # output.insert(END,definition)
+    #engine_talk(definition)
+    #nameButton = Button(window, text= "Enter your Name", width = 20, command = click, fg = "#272324", bg= "#A9A9A9",state="disabled").grid(row=3, column=0 ,sticky=pos)
+
     if hour > 0 and hour <12 :
-        engine_talk('Good Morning Sir...')
+        engine_talk('Good Morning {}'.format(str(entered_text)))
         engine_talk('I am alexa... Your Virtal Assistant')
         engine_talk(getDate())
         engine_talk(random.choice(HELP_GREET_RESPONSES))
@@ -107,41 +118,72 @@ def wishMe():
         engine_talk(random.choice(HELP_GREET_RESPONSES))
 
     else:
-        engine_talk('Good Night Sir..')
+        engine_talk('Good Night {}'.format(str(entered_text)))
         engine_talk('I am Alexa... Your Virtal Assistant')
         engine_talk(getDate())
         engine_talk(random.choice(HELP_GREET_RESPONSES))
 
 def main():
 #if __name__ =="__main__" :
-    wishMe()
+    #wishMe()
+    #count += 1
     import tkinter as tk
+
+    usercommand = user_commands().lower()
+
+    while(usercommand != None):
     
-    while True:
-        usercommand = user_commands().lower()
+    #while True:
+        #usercommand = user_commands().lower()
         if ('audible' in usercommand) or ('can you hear me' in usercommand):
             engine_talk("Yes you are audiable")
+            break
 
-        if ('link' in usercommand):
+        if ('short link' in usercommand):
             engine_talk("Please Enter link")
             link = input("Please Enter Link")
             s = sh.Shortener()
             x = (s.tinyurl.short(link))
             engine_talk("Here Is your Short Link")
+            InsertText(x)
             print(x)
+            break
 
 
-        if(('play' in usercommand) or ('start' in usercommand) or ('music' in usercommand) or ('song' in usercommand)):
-            #song = usercommand.replace('play',' ')
-            pywhatkit.playonyt(usercommand)
+        if(('play song' in usercommand) or ('start song' in usercommand) or ('music' in usercommand) or ('song' in usercommand)):
+            engine_talk("why not")
+            song = usercommand.replace('play song',' ')
+            song = usercommand.replace('start song',' ')
+            song = usercommand.replace('music',' ')
+            song = usercommand.replace('song',' ')
+            pywhatkit.playonyt(song)
+            break
 
         if ('start youtube' in usercommand) or ('open youtube' in usercommand):
+            engine_talk("why not")
             webbrowser.open('www.youtube.com')
+            break
+
+        if ('facebook' in usercommand):
+            webbrowser.open('www.facebook.com')
+            break
+
+        if 'linkedin' in usercommand:
+            engine_talk("lets get professional")
+            webbrowser.open('www.linkedin.com')
+            break
+
+        if 'open stack over flow' in usercommand or 'stackoverflow' in usercommand or 'stack overflow' in usercommand:
+            engine_talk("Yaa Sure")
+            webbrowser.open('https://stackoverflow.com/')
+            break
+
 
         if 'time' in usercommand:
             time = datetime.datetime.now().strftime('%I:%M %p')
             InsertText(time)
             engine_talk('The current time is' +time)
+            break
 
         if(('who is' in usercommand) or ('kon hai' in usercommand) or ("something about" in usercommand) or ('kaun' in usercommand)):
             name = usercommand.replace('who is','')
@@ -149,22 +191,37 @@ def main():
             InsertText(info)
             print(info)
             engine_talk(info)
+            break
 
         if 'joke' in usercommand:
             engine_talk(pyjokes.get_joke())
+            break
 
-        if 'show me' in usercommand:
+        if 'show me' in usercommand or 'search for' in usercommand:
             show = usercommand.replace('show me',' ')
+            show = usercommand.replace('search for',' ')
             engine_talk("here is" +show)
             webbrowser.open_new_tab('https://www.google.com/search?q='+show)
+            break
 
-        if(('stop' in usercommand) or ('exit' in usercommand) or ('shut down' in usercommand)):
+        if(('stop' in usercommand) or ('exit' in usercommand) or ('shut down' in usercommand) or ('goodbye' in usercommand)):
             engine_talk("Good Bye Sir... hope we meet soon")
-
             sys.exit()
 
         if 'amazon' in usercommand:
             webbrowser.open_new_tab('https://www.amazon.in/')
+            break
+
+        if ('love you' in usercommand or 'would you marry me' in usercommand):
+            engine_talk('oh, you are so sweet')
+            InsertText('oh, you are so sweet')
+            break
+
+
+        else:
+            engine_talk("Im not sure I understand")
+            InsertText("Im not sure I understand")
+            usercommand = user_commands().lower()
 
 
 def close_window():
@@ -176,33 +233,31 @@ window = Tk()
 window.title("Alexa")
 window.iconbitmap('C:\\Users\\Shubham\\Desktop\\brain_sWy_icon.ico')
 window.configure(background = 'black')
-window.geometry('595x660')
+window.geometry('430x420')  #'640x720
 
 #Photo Label
-AssisstancePhoto = 'C:\\Users\\Shubham\\Desktop\\robot.png'
+AssisstancePhoto = 'C:\\Users\\Shubham\\Desktop\\rt.png'
 photo1 = PhotoImage(file=AssisstancePhoto)
-Label (window , image = photo1, bg ='black') .grid(row=0, column = 0, sticky=E)
-
-# #Text Label
+Label (window , image = photo1, bg ='black') .grid(row=0, column = 0, sticky=pos)
 
 #create a text entry box
-textentry = Entry(window, width = 50 ,bg="grey")
+textentry = Entry(window, width = 40 ,bg="white", fg = 'black')
 textentry.grid(row =2 , column=0, sticky =pos)
 # text = textentry.get()
 
 #Add a submit button 
-#nameButton = Button(window, text= "Enter your Name", width = 20, command = click, fg = "#272324", bg= "#A9A9A9").grid(row=3, column=0 ,sticky=pos)
+nameButton = Button(window, text= "Enter your Name", width = 20, command = wishMe, fg = "#272324", bg= "#A9A9A9").grid(row=3, column=0 ,sticky=pos) #fg = "#272324", bg= "#A9A9A9"
 askButton = Button(window, text= "ASK", width= 20, command = refresh, fg = "#272324", bg= "#A9A9A9").grid(row=4, column= 0 , sticky=pos)
 
 #textbox
-output = Text(window, width=68 , height = 5, wrap = WORD, bg= 'black',fg = "#00D1FF")
+output = Text(window, width=40 , height = 5, wrap = WORD, bg= 'black',fg = "#00D1FF")
 output.grid(row=5, column=0, columnspan=2, sticky=pos)
 output.config(state=NORMAL)
 
 #Exit Text Label
-# Label (window,text="Click to Exit", bg= 'black',fg = "white",font = "none 10 bold" ).grid (row=6 ,column =0, sticky=W)
+Label (window,text="Click to Exit", bg= 'black',fg = "white",font = "none 10 bold" ).grid (row=6 ,column =0, sticky=pos)
 #Exit Button
-Button(window, text= "EXIT", width= 14, command=close_window, fg = "#272324", bg= "#A9A9A9").grid(row=7, column= 0 , sticky=pos)
+Button(window, text= "EXIT", width= 20, command=close_window, fg = "#272324", bg= "#A9A9A9").grid(row=7, column= 0 , sticky=pos)
 
 Label (window,text="© Made By Ujjwal Sharma", bg= 'black',fg = "white",font = "none 7 bold" ).grid (row=8 ,column =0, sticky=S)
 
