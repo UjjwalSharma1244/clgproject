@@ -13,6 +13,7 @@ import pyshorteners as sh
 from tkinter import *
 import tkinter as tk
 from PIL import Image, ImageTk
+from tkinter import messagebox
 print("welcome")
 pos = N
 
@@ -101,40 +102,36 @@ def wishMe():
     #definition = "Hello " +str(entered_text)+ " I'm Genia your virtual assistant\npress ASK to ask for anything"
     #output.insert(END,definition)
 
-    # output.insert(END,definition)
+    #output.insert(END,definition)
     #engine_talk(definition)
     #nameButton = Button(window, text= "Enter your Name", width = 20, command = click, fg = "#272324", bg= "#A9A9A9",state="disabled").grid(row=3, column=0 ,sticky=pos)
 
     if hour > 0 and hour <12 :
-        engine_talk('Good Morning {}'.format(str(entered_text)))
-        engine_talk('I am alexa... Your Virtal Assistant')
+        engine_talk('Good Morning {}'.format(str(entered_text)) + '\nI am alexa.... Your Virtal Assistant')
         engine_talk(getDate())
         engine_talk(random.choice(HELP_GREET_RESPONSES))
+        engine_talk('\npress ASK to ask for anything')
 
     elif hour >=12 and hour <= 18 :
-        engine_talk('Good Afternoon Sir...')
-        engine_talk('I am alexa.... Your Virtal Assistant')
+        engine_talk('Good Afternoon {}'.format(str(entered_text)) + '\nI am alexa.... Your Virtal Assistant')
         engine_talk(getDate())
         engine_talk(random.choice(HELP_GREET_RESPONSES))
+        engine_talk('\npress ASK to ask for anything')
 
     else:
-        engine_talk('Good Night {}'.format(str(entered_text)))
-        engine_talk('I am Alexa... Your Virtal Assistant')
+        engine_talk('Good Night {}'.format(str(entered_text)) + '\nI am alexa.... Your Virtal Assistant')
         engine_talk(getDate())
         engine_talk(random.choice(HELP_GREET_RESPONSES))
+        engine_talk('\npress ASK to ask for anything')
 
 def main():
-#if __name__ =="__main__" :
-    #wishMe()
-    #count += 1
     import tkinter as tk
+    a = 'stop exit shutdown goodbye sleep see you later'
 
     usercommand = user_commands().lower()
 
     while(usercommand != None):
-    
-    #while True:
-        #usercommand = user_commands().lower()
+
         if ('audible' in usercommand) or ('can you hear me' in usercommand):
             engine_talk("Yes you are audiable")
             break
@@ -185,7 +182,7 @@ def main():
             engine_talk('The current time is' +time)
             break
 
-        if(('who is' in usercommand) or ('kon hai' in usercommand) or ("something about" in usercommand) or ('kaun' in usercommand)):
+        if(('who is' in usercommand) or ("something about" in usercommand)):
             name = usercommand.replace('who is','')
             info = wikipedia.summary(name,1)
             InsertText(info)
@@ -197,14 +194,16 @@ def main():
             engine_talk(pyjokes.get_joke())
             break
 
-        if 'show me' in usercommand or 'search for' in usercommand:
+        if 'show me' in usercommand or 'search for' in usercommand or 'google' in usercommand:
             show = usercommand.replace('show me',' ')
             show = usercommand.replace('search for',' ')
             engine_talk("here is" +show)
             webbrowser.open_new_tab('https://www.google.com/search?q='+show)
             break
+        
 
-        if(('stop' in usercommand) or ('exit' in usercommand) or ('shut down' in usercommand) or ('goodbye' in usercommand)):
+        if(('stop' in usercommand) or ('exit' in usercommand) or ('shut down' in usercommand) or ('goodbye' in usercommand) or ('sleep' in usercommand) or ('see you later' in usercommand)):
+        #if usercommand in a:
             engine_talk("Good Bye Sir... hope we meet soon")
             sys.exit()
 
@@ -217,6 +216,37 @@ def main():
             InsertText('oh, you are so sweet')
             break
 
+        if 'bmi' in usercommand or 'b m i' in usercommand: 
+            Height=float(input("Enter your height in centimeters: "))
+            Weight=float(input("Enter your Weight in Kg: "))
+            Height = Height/100
+            BMI=Weight/(Height*Height)
+            print("your Body Mass Index is: ",BMI)
+            if(BMI>0):
+                if(BMI<=16):
+                    print("you are severely underweight")
+                elif(BMI<=18.5):
+                    print("you are underweight")
+                elif(BMI<=25):
+                    print("you are Healthy")
+                elif(BMI<=30):
+                    print("you are overweight")
+                else: print("you are severely overweight")
+            else:("enter valid details")
+            break
+
+        if "what can you do" in usercommand.lower():
+            engine_talk("here is a list of what i can do")
+            messagebox.showinfo("DREAM functions", "1.Try saying 'Hi','Hello'" +
+                            "\n2.Try asking 'What day is this?'" +
+                            "\n3.Try asking 'What month is it?'" +
+                            "\n4.Try asking 'What time is it?'" +
+                            "\n5.You search in google by saying...'Search (or) Google <anything>'" +
+                            "\n6.Play youtube by saying'YouTube... <video_name>'" +
+                            "\n7.Search in Wikipedia by saying...'wikipedia...<anything>'" +
+                            "\n8.To close say 'stop' or 'exit' or 'goobye' or 'Sleep' or 'See you later' or 'shutdown' "
+                            "\n9.You Can Calculate your BMI (Body Mass Index) ")
+            break
 
         else:
             engine_talk("Im not sure I understand")
@@ -246,7 +276,7 @@ textentry.grid(row =2 , column=0, sticky =pos)
 # text = textentry.get()
 
 #Add a submit button 
-nameButton = Button(window, text= "Enter your Name", width = 20, command = wishMe, fg = "#272324", bg= "#A9A9A9").grid(row=3, column=0 ,sticky=pos) #fg = "#272324", bg= "#A9A9A9"
+nameButton = Button(window, text= "Enter your Name", width = 20, command = wishMe, fg = "#272324", bg= "#A9A9A9").grid(row=3, column=0 ,sticky=pos)
 askButton = Button(window, text= "ASK", width= 20, command = refresh, fg = "#272324", bg= "#A9A9A9").grid(row=4, column= 0 , sticky=pos)
 
 #textbox
